@@ -52,8 +52,10 @@ public final class FormTag extends AbstractUriTag implements DynamicAttributes {
 		final CsrfGuard csrfGuard = CsrfGuard.getInstance();
 		final String tokenName = csrfGuard.getTokenName();
 
-		final LogicalSession logicalSession = csrfGuard.getLogicalSessionExtractor().extract((HttpServletRequest) this.pageContext.getRequest());
-		final String tokenValue = Objects.nonNull(logicalSession) ? csrfGuard.getTokenService().getTokenValue(logicalSession.getKey(), buildUri(this.attributes.get("action"))) : null;
+		final HttpServletRequest request = (HttpServletRequest) this.pageContext.getRequest();
+		final LogicalSession logicalSession = csrfGuard.getLogicalSessionExtractor().extract(request);
+		final String uri = this.attributes.getOrDefault("action", request.getRequestURI());
+		final String tokenValue = Objects.nonNull(logicalSession) ? csrfGuard.getTokenService().getTokenValue(logicalSession.getKey(), buildUri(uri)) : null;
 
 		try {
 			this.pageContext.getOut().write(buildStartHtml(tokenName, tokenValue));

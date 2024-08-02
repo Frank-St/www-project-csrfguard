@@ -55,7 +55,9 @@ public abstract class AbstractTag extends TagSupport {
 	}
 
 	private String normalizeUri(final String uri) {
-		return uri.startsWith("/") ? uri
-								   : this.pageContext.getServletContext().getContextPath() + '/' + uri;
+		final int queryStringStart = uri.indexOf('?');
+		final String uriWithoutQueryString = (queryStringStart >= 0) ? uri.substring(0, queryStringStart) : uri;
+		return uriWithoutQueryString.startsWith("/") ? uriWithoutQueryString
+								                     : this.pageContext.getServletContext().getContextPath() + '/' + uriWithoutQueryString;
 	}
 }
